@@ -1,4 +1,4 @@
-version: "2"
+version: "3"
 
 services:
   vote:
@@ -14,7 +14,7 @@ services:
 
   result:
     build: ./result
-    command: nodemon --debug server.js
+    command: nodemon server.js
     volumes:
       - ./result:/app
     ports:
@@ -25,7 +25,9 @@ services:
       - back-tier
 
   worker:
-    build: ./worker/Dockerfile.j
+    build:
+      context: ./worker
+      dockerfile: Dockerfile.j
     networks:
       - back-tier
 
@@ -39,6 +41,9 @@ services:
   db:
     image: postgres:9.4
     container_name: db
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
     volumes:
       - "db-data:/var/lib/postgresql/data"
     networks:
